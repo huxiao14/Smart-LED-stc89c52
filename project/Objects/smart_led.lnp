@@ -1,0 +1,8 @@
+".\Objects\STARTUP.obj",
+".\Objects\main.obj",
+".\Objects\BH.obj",
+".\Objects\Timer.obj",
+".\Objects\EEPROM.obj",
+".\Objects\oled.obj" 
+TO ".\Objects\smart_led" 
+PRINT(".\Listings\smart_led.m51") RAMSIZE(256) 

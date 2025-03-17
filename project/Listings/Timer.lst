@@ -1,0 +1,109 @@
+C51 COMPILER V9.54   TIMER                                                                 04/03/2023 19:08:32 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE TIMER
+OBJECT MODULE PLACED IN .\Objects\Timer.obj
+COMPILER INVOKED BY: E:\Embedded System\51\Keil5\C51\BIN\C51.EXE Timer.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRI
+                    -NT(.\Listings\Timer.lst) TABS(2) OBJECT(.\Objects\Timer.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          
+   3          sbit ET2 = IE^5;
+   4          sfr T2CON = 0xc8;
+   5          sbit TF2 = T2CON^7;
+   6          sbit TR2 = T2CON^2;
+   7          sfr T2MOD = 0xc9;
+   8          sfr RCAP2L = 0xca;
+   9          sfr RCAP2H = 0xcb;
+  10          sfr TL2 = 0xcc;
+  11          sfr TH2 = 0xcd;
+  12          
+  13          //void Timer_Tran(unsigned int time_us,unsigned char *p_high,unsigned char *p_low) //½«¶¨Ê±Æ÷ËùÐèÊ±¼äÒÔusÐ
+             -ÎÊ½´«Èë£¬²¢½«Ö¸ÕëÖ¸ÏòµÄhigh low¸ÄÎª¿ÉÖ±½ÓÉèÖÃ¶¨Ê±Æ÷µÄÖµ
+  14          //{
+  15          //  unsigned int time = 65535-time_us+1;
+  16          //  unsigned char tmp;
+  17          //  tmp = (unsigned char)(time & 0x00FF);
+  18          //  *p_low = tmp;
+  19          //  tmp = (unsigned char)(time >> 8);
+  20          //  *p_high = tmp;
+  21          //}
+  22          
+  23          void Timer0_Init()    //³õÊ¼»¯¶¨Ê±Æ÷0   10us
+  24          {
+  25   1        TMOD &= 0xF0; // ±£³Ö¶¨Ê±Æ÷1²»±äµÄÇ°ÌáÏÂÇå¿Õ¶¨Ê±Æ÷0µÄÉèÖÃ
+  26   1        TMOD |= 0x01; // ÉèÖÃ¶¨Ê±Æ÷Ä£Ê½Îªxxxx0001£¬¼´¶¨Ê±Æ÷0µÄÄ£Ê½1
+  27   1        TH0 = 0xFF;   // ¶¨Ê±Æ÷¸ßÎ»ÉèÖÃ 
+  28   1        TL0 = 0xF7;   // ¶¨Ê±Æ÷µÍÎ»ÉèÖÃ
+  29   1        TR0 = 1;
+  30   1        ET0 = 1;
+  31   1        EA = 1;
+  32   1      }
+  33          
+  34          void Timer0_Stop()
+  35          {
+  36   1        TR0 = 0;
+  37   1        ET0 = 0;
+  38   1      //  EA = 0;
+  39   1      }
+  40          
+  41          void Timer1_Init()    //³õÊ¼»¯¶¨Ê±Æ÷1 50ms
+  42          {
+  43   1        TMOD &= 0x0F; // ±£³Ö¶¨Ê±Æ÷0²»±äµÄÇ°ÌáÏÂÇå¿Õ¶¨Ê±Æ÷1µÄÉèÖÃ
+  44   1        TMOD |= 0x10; // ÉèÖÃ¶¨Ê±Æ÷Ä£Ê½Îª0001xxxx£¬¼´¶¨Ê±Æ÷1µÄÄ£Ê½1
+  45   1        TH1 = 0x3C;   // ¶¨Ê±Æ÷¸ßÎ»ÉèÖÃ 
+  46   1        TL1 = 0xB0;   // ¶¨Ê±Æ÷µÍÎ»ÉèÖÃ
+  47   1        TR1 = 1;    
+  48   1      //  TF1 = 0;
+  49   1        ET1 = 1;
+  50   1        EA = 1;
+  51   1      }
+  52          
+  53          void Timer1_Stop()
+C51 COMPILER V9.54   TIMER                                                                 04/03/2023 19:08:32 PAGE 2   
+
+  54          {
+  55   1        TR1 = 0;
+  56   1        ET1 = 0;
+  57   1      }
+  58          //void Timer1_Init(unsigned char *p_high,unsigned char *p_low)    //³õÊ¼»¯¶¨Ê±Æ÷1
+  59          //{
+  60          //  TMOD &= 0x0F; // ±£³Ö¶¨Ê±Æ÷0²»±äµÄÇ°ÌáÏÂÇå¿Õ¶¨Ê±Æ÷1µÄÉèÖÃ
+  61          //  TMOD |= 0x10; // ÉèÖÃ¶¨Ê±Æ÷Ä£Ê½Îª0001xxxx£¬¼´¶¨Ê±Æ÷1µÄÄ£Ê½1
+  62          //  TH1 = *p_high;    // ¶¨Ê±Æ÷¸ßÎ»ÉèÖÃ 
+  63          //  TL1 = *p_low;   // ¶¨Ê±Æ÷µÍÎ»ÉèÖÃ
+  64          //  TR1 = 1;    
+  65          //  ET1 = 1;
+  66          //  EA = 1;
+  67          //}
+  68          
+  69          void Timer2_Init()   //25ms,16Î»×Ô¶¯ÖØÔØ
+  70          {
+  71   1        RCAP2L = TL2 = 0x58;
+  72   1        RCAP2H = TH2 = 0x9E;
+  73   1        TR2 = 1;
+  74   1        ET2 = 1;
+  75   1        EA = 1;
+  76   1      }
+  77          
+  78          void Timer2_Stop()
+  79          {
+  80   1        TR2 = 0;
+  81   1        ET2 = 0;
+  82   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     72    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
